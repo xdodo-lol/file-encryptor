@@ -1,30 +1,3 @@
-#!/usr/bin/env python3
-"""
-File Encryptor — AES-256-GCM
------------------------------
-Encrypts any file using the modern, strong AES-256 algorithm in GCM mode
-(authenticated encryption — protects against both reading and tampering).
-
-The key is never stored anywhere — it is derived from your password every
-time, using PBKDF2-HMAC-SHA256 with 600,000 iterations (protection against
-brute-force and rainbow-table attacks) and a unique random salt per file.
-
-The file is encrypted "in place" — the name and extension stay the same,
-only the file's content is replaced with the encrypted version. So the
-program can tell an encrypted file apart from a normal one, a small MAGIC
-header is added at the start.
-
-Encrypted file format:
-    [5 bytes MAGIC][16 bytes salt][12 bytes nonce][ciphertext + auth tag]
-
-If someone enters the wrong password, or the file gets corrupted or
-tampered with, decryption simply fails with an error (GCM verifies
-integrity), and the original (encrypted) file content stays untouched.
-
-Run:
-    python file_encryptor.py
-"""
-
 import base64
 import os
 import secrets
@@ -52,7 +25,6 @@ KEY_SIZE = 32
 
 
 def derive_key(password: str, salt: bytes) -> bytes:
-    """Turns a password into a 256-bit key via PBKDF2-HMAC-SHA256."""
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=KEY_SIZE,
@@ -63,7 +35,6 @@ def derive_key(password: str, salt: bytes) -> bytes:
 
 
 def is_encrypted(filepath: str) -> bool:
-    """Checks whether a file is already encrypted by this program (MAGIC header)."""
     try:
         with open(filepath, "rb") as f:
             header = f.read(len(MAGIC))
@@ -73,9 +44,6 @@ def is_encrypted(filepath: str) -> bool:
 
 
 def _atomic_replace(filepath: str, data: bytes) -> None:
-    """Writes data to a temporary file next to the original, then atomically
-    replaces the original with it. If something fails mid-write, the
-    original file stays intact."""
     directory = os.path.dirname(os.path.abspath(filepath)) or "."
     fd, tmp_path = tempfile.mkstemp(dir=directory)
     try:
