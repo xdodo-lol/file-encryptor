@@ -36,8 +36,7 @@ python -m pip install cryptography
 ```bash
 python file_encryptor.py
 ```
-
-1. Click **Encrypt File**, choose a file, set a password
-2. The file is encrypted in place — nothing new is created
-3. Click **Decrypt File**, choose the same file, enter the password
-4. The original content is restored
+Click **Encrypt File**, choose a file, set a password
+The file is encrypted in place — nothing new is created
+Click **Decrypt File**, choose the same file, enter the password
+The original content is restored
